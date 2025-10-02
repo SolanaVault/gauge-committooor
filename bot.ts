@@ -275,7 +275,7 @@ const run = async () => {
   const { gaugeKeys } = await getGaugeKeys();
 
   const limit = pLimit(1);
-  await limit.map([eligibleHolders[8]], async (eligibleHolder, i) => {
+  await limit.map(eligibleHolders, async (eligibleHolder, i) => {
     console.log(`Processing holder: ${eligibleHolder.data.owner}`);
     const ixs = await getCommitVoteIxs(
       connection,
