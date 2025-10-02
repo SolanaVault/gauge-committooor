@@ -276,7 +276,6 @@ const run = async () => {
       content: currentEpoch.toString(),
     },
   ]);
-  process.exit(0);
 
   const eligibleHolders = await getEligibleHolders();
   console.log(`Amount of eligible holders: ${eligibleHolders.length}`);
