@@ -1,0 +1,43 @@
+on:
+  push:
+    branches:
+      - "**"
+  release:
+    types: [published]
+
+concurrency: ci-${{ contains(github.ref, 'refs/tags/') && 'production' || github.ref }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      packages: read
+    name: Run bot
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pnpm
+          key: pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run bot
+        id: run-bot
+        env:
+          RPC_URL: ${{ secrets.RPC_URL }}
+          G_TOKEN: ${{ secrets.G_TOKEN }}
+          BOT_PK: ${{ secrets.BOT_PK }}
+        run: pnpm start
