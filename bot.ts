@@ -270,13 +270,6 @@ const run = async () => {
     process.exit(0);
   }
 
-  await saveDataToGitHub([
-    {
-      path: "last_parsed_epoch",
-      content: currentEpoch.toString(),
-    },
-  ]);
-
   const eligibleHolders = await getEligibleHolders();
   console.log(`Amount of eligible holders: ${eligibleHolders.length}`);
   const { gaugeKeys } = await getGaugeKeys();
@@ -298,6 +291,14 @@ const run = async () => {
     console.log(`Processed ${i + 1} of ${eligibleHolders.length} holders`);
     console.log(`--------------------------------`);
   });
+
+  await saveDataToGitHub([
+    {
+      path: "last_parsed_epoch",
+      content: currentEpoch.toString(),
+    },
+  ]);
+  console.log("Data saved to GitHub");
 };
 
 run();
