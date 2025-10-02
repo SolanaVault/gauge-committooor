@@ -22,5 +22,6 @@
     "lodash": "^4.17.21",
     "octokit-commit-multiple-files": "^5.0.3",
     "p-limit": "^7.1.1"
-  }
+  },
+  "packageManager": "pnpm@9.15.4"
 }
