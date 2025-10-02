@@ -14,7 +14,7 @@ export const saveDataToGitHub = async (
   });
 
   const owner = "SolanaVault";
-  const repo = "vault-lst-list-generator";
+  const repo = "gauge-committooor";
 
   const changes = files.reduce((acc, file) => {
     acc[file.path] = Buffer.from(file.content).toString("base64");
