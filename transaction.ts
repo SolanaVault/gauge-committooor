@@ -132,7 +132,7 @@ export const sendTransaction = async (
     ];
     if (conditions.some((condition) => e.message.includes(condition))) {
       // Do nothing so this tx goes back in the queue
-      return "timeout" as const;
+      return sendTransaction(connection, txs, allSigners, payerKey, luts);
     }
     console.log("Error", e);
     return "error" as const;
