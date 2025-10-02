@@ -299,6 +299,7 @@ const run = async () => {
     },
   ]);
   console.log("Data saved to GitHub");
+  process.exit(0);
 };
 
 run();
