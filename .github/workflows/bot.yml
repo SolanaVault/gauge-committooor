@@ -2,6 +2,8 @@ on:
   workflow_dispatch:
   release:
     types: [published]
+  schedule:
+    - cron: "0 0 * * *" # Runs at 00:00 UTC every day
 
 concurrency: ci-${{ contains(github.ref, 'refs/tags/') && 'production' || github.ref }}
 
