@@ -32,6 +32,8 @@ const keypair = Keypair.fromSecretKey(
 );
 console.log(keypair.publicKey.toString());
 
+let createdEpochGauges: string[] = [];
+
 type VeVHolder = {
   data: {
     locker: string;
@@ -70,8 +72,7 @@ const getEligibleHolders = async () => {
   const holders = await getVeVHolders();
   return holders.filter(
     (holder: any) =>
-      (holder.veV > MIN_VEV * 1e6 ||
-        holder.data.owner === "EXdZNfWheWzNZrg53atXSaWqLNtMssdUzB6kNzHxn9Mf") &&
+      holder.veV > MIN_VEV * 1e6 &&
       holder.data.owner === holder.data.voteDelegate, // Exclude votex delegators
   );
 };
@@ -208,7 +209,8 @@ const getCommitVoteIxs = async (
 
       const iixs: TransactionInstruction[] = [];
 
-      if (!(await gaugeSDK.gauge.fetchEpochGauge(epochGauge))) {
+      if (!createdEpochGauges.includes(epochGauge.toString()) && !(await gaugeSDK.gauge.fetchEpochGauge(epochGauge))) {
+        createdEpochGauges.push(epochGauge.toString());
         iixs.push(
           gaugeSDK.gauge.program.instruction.createEpochGauge(
             epochGaugeBump,
