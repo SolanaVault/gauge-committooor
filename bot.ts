@@ -32,7 +32,7 @@ const keypair = Keypair.fromSecretKey(
 );
 console.log(keypair.publicKey.toString());
 
-let createdEpochGauges: string[] = [];
+const createdEpochGauges: string[] = [];
 
 type VeVHolder = {
   data: {
@@ -253,7 +253,6 @@ const getCommitVoteIxs = async (
 const run = async () => {
   const connection = new Connection(process.env.RPC_URL!);
 
-  // @TODO: Get current epoch and do not run if already ran
   const gaugemeister = await connection.getAccountInfo(
     new PublicKey(GAUGEMEISTER),
   );

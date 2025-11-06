@@ -107,7 +107,9 @@ export const sendTransaction = async (
 
     const hash = await Promise.race([
       (async () => {
-        const hash = await stakedConnection.sendTransaction(vt.transaction);
+        const hash = await stakedConnection.sendTransaction(vt.transaction, {
+          skipPreflight: true,
+        });
         await connection.confirmTransaction(
           {
             signature: hash,
