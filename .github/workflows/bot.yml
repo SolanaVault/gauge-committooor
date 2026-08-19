@@ -11,13 +11,13 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      deployments: write
-      packages: read
+      contents: write
     name: Run bot
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         with:
@@ -41,6 +41,6 @@ jobs:
         id: run-bot
         env:
           RPC_URL: ${{ secrets.RPC_URL }}
-          G_TOKEN: ${{ secrets.G_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           BOT_PK: ${{ secrets.BOT_PK }}
         run: pnpm start
