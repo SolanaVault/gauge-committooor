@@ -24,8 +24,10 @@ import pLimit from "p-limit";
 import { parsers } from "./parsers";
 import fs from "fs";
 import { saveDataToGitHub } from "./github";
-
-const MIN_VEV = 50000;
+import {
+  getEligibleHolders,
+  type VeVHolder,
+} from "./holders";
 
 const keypair = Keypair.fromSecretKey(
   Buffer.from(new Uint8Array(JSON.parse(process.env.BOT_PK!))),
@@ -33,49 +35,6 @@ const keypair = Keypair.fromSecretKey(
 console.log(keypair.publicKey.toString());
 
 const createdEpochGauges: string[] = [];
-
-type VeVHolder = {
-  data: {
-    locker: string;
-    owner: string;
-    bump: number;
-    tokens: string;
-    amount: string;
-    escrowStartedAt: string;
-    escrowEndsAt: string;
-    voteDelegate: string;
-  };
-  veV: number;
-};
-
-const getVeVHolders = async () => {
-  const response = await fetch(
-    "https://raw.githubusercontent.com/saberdao/birdeye-data/refs/heads/main/veTokenHolders/VAULTVXqi93aaq9FsyPKgdgp6Ge1H1HoSvNC4ZbqFDs.json",
-  );
-  const data = await response.json();
-  return data.map((holder) => {
-    return {
-      ...holder,
-      veV: Math.max(
-        0,
-        ((Number(holder.data.amount) *
-          (parseInt(holder.data.escrowEndsAt) -
-            Math.round(Date.now() / 1000))) /
-          (365 * 5 * 86400)) *
-          10,
-      ),
-    };
-  }) as VeVHolder[];
-};
-
-const getEligibleHolders = async () => {
-  const holders = await getVeVHolders();
-  return holders.filter(
-    (holder: any) =>
-      holder.veV > MIN_VEV * 1e6 &&
-      holder.data.owner === holder.data.voteDelegate, // Exclude votex delegators
-  );
-};
 
 const getGaugeKeys = async () => {
   const validatorTokenList = (await fetch(
@@ -271,7 +230,7 @@ const run = async () => {
     process.exit(0);
   }
 
-  const eligibleHolders = await getEligibleHolders();
+  const eligibleHolders = await getEligibleHolders(connection);
   console.log(`Amount of eligible holders: ${eligibleHolders.length}`);
   const { gaugeKeys } = await getGaugeKeys();
 
@@ -303,4 +262,7 @@ const run = async () => {
   process.exit(0);
 };
 
-run();
+run().catch((error) => {
+  console.error("Bot failed", error);
+  process.exit(1);
+});

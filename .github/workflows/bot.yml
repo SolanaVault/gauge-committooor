@@ -35,7 +35,13 @@ jobs:
           restore-keys: pnpm-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Test
+        run: pnpm test
+
+      - name: Typecheck
+        run: pnpm typecheck
 
       - name: Run bot
         id: run-bot
